@@ -1,0 +1,14 @@
+.approve-button{
+    visibility: hidden;
+}
+.reject-button{
+    visibility: hidden;
+}
+
+
+tr.pending .approve-button{
+    visibility: visible;
+}
+tr.pending .reject-button{
+    visibility: visible;
+}

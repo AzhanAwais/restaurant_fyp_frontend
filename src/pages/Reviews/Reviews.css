@@ -1,0 +1,36 @@
+td{
+    white-space: break-spaces;
+    width: 180px;
+
+}
+
+tr{
+    white-space: nowrap;
+}
+
+h5{
+    white-space: nowrap;
+}
+
+th{
+    font-size: large;
+}
+
+th.name-col{
+    width: 300px !important;
+}
+
+.form-select.search-select{
+    width: 270px;
+}
+
+
+#reviewer-search-box{
+    width: 350px;
+}
+#seller-search-box{
+    width: 350px;
+}
+#review-search-box{
+    width: 815px;
+}

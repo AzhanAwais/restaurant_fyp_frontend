@@ -1,0 +1,15 @@
+.btn.approve-button {
+  background-color: #3cb043;
+}
+
+.btn.reject-button {
+  background-color: #b32122;
+}
+
+.btn.approve-button:hover {
+  background-color: black;
+}
+
+.btn.reject-button:hover {
+  background-color: black;
+}

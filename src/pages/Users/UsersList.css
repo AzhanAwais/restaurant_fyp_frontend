@@ -1,0 +1,31 @@
+
+td{
+    white-space: nowrap;
+    width: 180px;
+}
+
+tr{
+    white-space: nowrap;
+}
+h5{
+    white-space: nowrap;
+}
+
+th{
+    font-size: large;
+}
+
+th.name-col{
+    width: 300px !important;
+}
+
+.form-select.search-select{
+    width: 270px;
+}
+input.user-filter-input{
+    width: 350px;
+}
+
+input.user-search-box{
+    width: 250px;
+}
