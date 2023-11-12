@@ -10,30 +10,35 @@ const Cuisine = () => {
   const [onDelete, setOnDelete] = useState(1)
   const [modalType, setModalType] = useState("add")
   const [id, setId] = useState(null)
+  const [search, setSearch] = useState("")
 
   const handleOnAddEdit = () => {
     setOnAddEdit(onAddEdit + 1)
   }
 
   const addCuisine = async (name) => {
-    try {
-      const data = await CreateCuisine({ name })
-      setAddEditCuisineModal(false)
-      handleOnAddEdit()
-    }
-    catch (e) {
-      console.log(e)
+    if (name) {
+      try {
+        const data = await CreateCuisine({ name })
+        setAddEditCuisineModal(false)
+        handleOnAddEdit()
+      }
+      catch (e) {
+        console.log(e)
+      }
     }
   }
 
   const editCuisine = async (name) => {
-    try {
-      const data = await UpdateCuisine(id, { name })
-      setAddEditCuisineModal(false)
-      handleOnAddEdit()
-    }
-    catch (e) {
-      console.log(e)
+    if (name) {
+      try {
+        const data = await UpdateCuisine(id, { name })
+        setAddEditCuisineModal(false)
+        handleOnAddEdit()
+      }
+      catch (e) {
+        console.log(e)
+      }
     }
   }
 
@@ -55,6 +60,10 @@ const Cuisine = () => {
       console.log(e)
     }
   }
+
+  const filteredResults = cuisine?.filter((item) => (
+    item?.name?.toLowerCase().includes(search)
+  ))
 
   useEffect(() => {
     const getAllCuisine = async () => {
@@ -84,6 +93,8 @@ const Cuisine = () => {
           <div className="row align-items-center mb-3">
             <div className="col-8 col-xxl-8 d-flex pe-0">
               <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 type="keyword"
                 class="form-control text-dark user-search-box"
                 id="search-box"
@@ -116,7 +127,7 @@ const Cuisine = () => {
               </thead>
               <tbody>
                 {
-                  cuisine?.map((item, index) => (
+                  filteredResults?.map((item, index) => (
                     <tr>
                       <td>{index + 1}</td>
                       <td>{item?.name}</td>

@@ -42,14 +42,14 @@ function App() {
             <Route path="/cat" element={<Cat />} />
             <Route path="/users" element={<Users />} />
             <Route path="/listings" element={<Listings />} />
-            <Route path="/view-listing" element={<ViewListing />} />
+            <Route path="/view-listing/:id" element={<ViewListing />} />
             <Route path="/pending-listing" element={<PendingListings />} />
             <Route path="/view-pending-listing" element={<ViewPendingListing />} />
             <Route path="/locations" element={<Locations />} />
             <Route path="/media" element={<Media />} />
             <Route path="/reviews" element={<Reviews />} />
-            <Route path="/view-review" element={<ViewReview />} />
-            <Route path="/view-user" element={<ViewUser />} />
+            <Route path="/view-review/:id" element={<ViewReview />} />
+            <Route path="/view-user/:id" element={<ViewUser />} />
             <Route path="/view-user-2" element={<ViewUser02 />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/cuisine" element={<Cuisine />} />

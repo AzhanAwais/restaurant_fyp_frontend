@@ -10,5 +10,7 @@ export const apiUrl = {
     cuisine: "/cuisine",
     ambience: "/ambience",
     user: "/user",
-    restaurant: "/restaurant"
+    restaurant: "/restaurant",
+    blog: "/blog",
+    comment: "/comment",
 }

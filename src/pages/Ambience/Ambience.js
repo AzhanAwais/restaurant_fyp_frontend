@@ -10,30 +10,35 @@ const Ambience = () => {
   const [onDelete, setOnDelete] = useState(1)
   const [modalType, setModalType] = useState("add")
   const [id, setId] = useState(null)
+  const [search, setSearch] = useState("")
 
   const handleOnAddEdit = () => {
     setOnAddEdit(onAddEdit + 1)
   }
 
   const addAmbience = async (name) => {
-    try {
-      const data = await CreateAmbience({ name })
-      setAddEditAmbienceModal(false)
-      handleOnAddEdit()
-    }
-    catch (e) {
-      console.log(e)
+    if (name) {
+      try {
+        const data = await CreateAmbience({ name })
+        setAddEditAmbienceModal(false)
+        handleOnAddEdit()
+      }
+      catch (e) {
+        console.log(e)
+      }
     }
   }
 
   const editAmbience = async (name) => {
-    try {
-      const data = await UpdateAmbience(id, { name })
-      setAddEditAmbienceModal(false)
-      handleOnAddEdit()
-    }
-    catch (e) {
-      console.log(e)
+    if (name) {
+      try {
+        const data = await UpdateAmbience(id, { name })
+        setAddEditAmbienceModal(false)
+        handleOnAddEdit()
+      }
+      catch (e) {
+        console.log(e)
+      }
     }
   }
 
@@ -56,10 +61,14 @@ const Ambience = () => {
     }
   }
 
+  const filteredResults = ambience?.filter((item) => (
+    item?.name?.toLowerCase().includes(search)
+  ))
+
   useEffect(() => {
     const getAllAmbience = async () => {
       const params = {
-        paginate: false
+        paginate: false,
       }
       const data = await GetAllAmbience(params)
       setAmbience(data.data.data)
@@ -67,7 +76,6 @@ const Ambience = () => {
 
     getAllAmbience()
   }, [onAddEdit, onDelete])
-
 
   return (
     <>
@@ -85,6 +93,8 @@ const Ambience = () => {
           <div className="row align-items-center mb-3">
             <div className="col-8 col-xxl-8 d-flex pe-0">
               <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 type="keyword"
                 class="form-control text-dark user-search-box"
                 id="search-box"
@@ -117,7 +127,7 @@ const Ambience = () => {
               </thead>
               <tbody>
                 {
-                  ambience?.map((item, index) => (
+                  filteredResults?.map((item, index) => (
                     <tr>
                       <td>{index + 1}</td>
                       <td>{item?.name}</td>
