@@ -1,8 +1,17 @@
 import React from "react";
 import "./sidebar.css";
 import FNLogo from "../images/foodnauts-Logo.png";
+import { useNavigate } from "react-router-dom";
+import { EmptyLocalStorage } from "../services/localStorage";
 
 const Sidebar = () => {
+  const navigate = useNavigate()
+
+  const logout = ()=>{
+    EmptyLocalStorage()
+    navigate("/")
+  }
+
   return (
     <div className="wrapper">
       <nav className="sidebar sticky-left bg-dark">
@@ -104,6 +113,7 @@ const Sidebar = () => {
               <hr class="hr hr-blurry mb-0" />
             </a>
             <a
+              onClick={logout}
               href="/"
               className="list-group-item list-group-item-action bg-dark text-light border-0 mb-4"
             >

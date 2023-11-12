@@ -1,10 +1,71 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./ViewUser.css";
 import UserPFP from "../../images/user-pfp.jpeg";
 import PageNav from "../../components/PageNav";
 import ReviewImg01 from "../../images/review-img-01.jpg";
+import { useNavigate, useParams } from "react-router-dom";
+import { DeleteUser, GetSingleUser } from "../../services/user";
+import moment from "moment";
+import { GetAllBlog } from "../../services/blog";
 
 const ViewUser = () => {
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(10)
+  const [totalPage, setTotalPage] = useState(1)
+  const [blogs, setBlogs] = useState([])
+  const [search, setSearch] = useState("")
+  const navigate = useNavigate()
+
+  const [user, setUser] = useState(null)
+  const { id } = useParams()
+
+  const filteredResults = blogs?.filter((item) => (
+    item?.title?.toLowerCase().includes(search)
+  ))
+
+  const deleteUser = async()=>{
+    try{
+        const res = await DeleteUser(id)
+        navigate("/users")
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+
+  useEffect(() => {
+    const getSingleUser = async () => {
+      try {
+        const data = await GetSingleUser(id)
+        setUser(data.data.data)
+      }
+      catch (e) {
+        console.log(e)
+      }
+    }
+
+    const getAllBlogsOfUser = async () => {
+      try {
+        const params = {
+          page: page,
+          perPage: perPage,
+          paginate: true,
+          user: id
+        }
+        const data = await GetAllBlog(params)
+        setTotalPage(data.data.pagination.totalPages)
+        setBlogs(data.data.data)
+
+      }
+      catch (e) {
+
+      }
+    }
+
+    getSingleUser()
+    getAllBlogsOfUser()
+  }, [])
+
   return (
     <div className="main-content m-5">
       <div className="row">
@@ -25,7 +86,7 @@ const ViewUser = () => {
                       style={{ width: "150px", height: "150px" }}
                     >
                       <img
-                        src={UserPFP}
+                        src={user?.profile_image || UserPFP}
                         class="object-fit-cover w-100 h-100"
                         alt="review-img"
                       />
@@ -40,7 +101,7 @@ const ViewUser = () => {
               <p className="fw-bold fs-5">ID</p>
             </div>
             <div className="col-10">
-              <p className="fw-light fs-5">1481</p>
+              <p className="fw-light fs-5">{user?._id}</p>
             </div>
           </div>
           <div className="row">
@@ -48,7 +109,7 @@ const ViewUser = () => {
               <p className="fw-bold fs-5">Name</p>
             </div>
             <div className="col-10">
-              <p className="fw-light fs-5">Marques Brownlee</p>
+              <p className="fw-light fs-5">{user?.name}</p>
             </div>
           </div>
           <div className="row">
@@ -56,7 +117,7 @@ const ViewUser = () => {
               <p className="fw-bold fs-5">User Name</p>
             </div>
             <div className="col-10">
-              <p className="fw-light fs-5">Marques_201</p>
+              <p className="fw-light fs-5">{user?.username}</p>
             </div>
           </div>
           <div className="row">
@@ -64,15 +125,7 @@ const ViewUser = () => {
               <p className="fw-bold fs-5">Joining Date</p>
             </div>
             <div className="col-10">
-              <p className="fw-light fs-5">03/08/2023</p>
-            </div>
-          </div>
-          <div className="row">
-            <div className=" col-2">
-              <p className="fw-bold fs-5">Followers</p>
-            </div>
-            <div className="col-10">
-              <p className="fw-light fs-5">4</p>
+              <p className="fw-light fs-5">{moment(user?.createdAt).format('D-MMM-YYYY')}</p>
             </div>
           </div>
           <div className="row">
@@ -80,7 +133,7 @@ const ViewUser = () => {
               <p className="fw-bold fs-5">Status</p>
             </div>
             <div className="col-10">
-              <p className="fw-light fs-5">Active</p>
+              <p className="fw-light fs-5">{user?.is_verified ? "Verified" : "Not Verified"}</p>
             </div>
           </div>
           <hr />
@@ -89,7 +142,7 @@ const ViewUser = () => {
               <p className="fw-bold fs-5">CNIC</p>
             </div>
             <div className="col-10">
-              <p className="fw-light fs-5">42101-2011333-1</p>
+              <p className="fw-light fs-5">{user?.cnic}</p>
             </div>
           </div>
           <div className="row">
@@ -97,7 +150,7 @@ const ViewUser = () => {
               <p className="fw-bold fs-5">Email</p>
             </div>
             <div className="col-10">
-              <p className="fw-light fs-5">hamzayonus00@gmail.com</p>
+              <p className="fw-light fs-5">{user?.email}</p>
             </div>
           </div>
           <div className="row">
@@ -105,15 +158,7 @@ const ViewUser = () => {
               <p className="fw-bold fs-5">Phone</p>
             </div>
             <div className="col-10">
-              <p className="fw-light fs-5">03043910232</p>
-            </div>
-          </div>
-          <div className="row">
-            <div className=" col-2">
-              <p className="fw-bold fs-5">Location</p>
-            </div>
-            <div className="col-10">
-              <p className="fw-light fs-5">Karachi, Pakistan</p>
+              <p className="fw-light fs-5">{user?.phone}</p>
             </div>
           </div>
 
@@ -123,7 +168,7 @@ const ViewUser = () => {
               <p className="fw-bold fs-5">Blogs</p>
             </div>
             <div className="col-10">
-              <p className="fw-light fs-5">69</p>
+              <p className="fw-light fs-5">{blogs?.length}</p>
             </div>
           </div>
 
@@ -133,7 +178,7 @@ const ViewUser = () => {
               <a className="btn button text-light w-100">View On Website</a>
             </div>
             <div className="col-3 col-xxl-2">
-              <a className="btn button text-light w-100">Delete</a>
+              <a className="btn button text-light w-100" onClick={deleteUser}>Delete</a>
             </div>
             <div className="col-3 col-xxl-2">
               <a className="btn button text-light w-100">Disable</a>
@@ -145,11 +190,13 @@ const ViewUser = () => {
       <div className="row">
         <div className="d-flex mb-2">
           <h3 className="fw-bold pb-0">Blogs</h3>
-          
+
         </div>
         <div className="row align-items-center">
           <div className="col-8 col-xxl-6 d-flex pe-0">
             <input
+             value={search}
+             onChange={(e) => setSearch(e.target.value)}
               type="keyword"
               class="form-control text-dark"
               id="search-box"
@@ -193,350 +240,45 @@ const ViewUser = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <div
-                  className="fixed-size-container"
-                  style={{ width: "120px", height: "120px" }}
-                >
-                  <img
-                    src={ReviewImg01}
-                    class="object-fit-cover w-100 h-100"
-                    alt="review-img"
-                  />
-                </div>
-              </td>
-              <td>4242</td>
-              <td className="">Feed The Hungry</td>
-              <td>
-                {" "}
-                "When was the last time you went to bed hungry? Maybe you
-                voluntarily fasted for 24 hours or had a busy day with little
-                time to eat. But going to bed hungry because there’s no food in
-                the house is a whole different, scary experience."
-              </td>
-              <td>30</td>
-              <td>14</td>
-              <td>03/08/2023 11:00</td>
-              <td>
-                <a
-                  href="/view-listing"
-                  className="btn button btn-sm text-light"
-                >
-                  View
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div
-                  className="fixed-size-container"
-                  style={{ width: "120px", height: "120px" }}
-                >
-                  <img
-                    src={ReviewImg01}
-                    class="object-fit-cover w-100 h-100"
-                    alt="review-img"
-                  />
-                </div>
-              </td>
-              <td>4242</td>
-              <td className="">Feed The Hungry</td>
-              <td>
-                {" "}
-                "When was the last time you went to bed hungry? Maybe you
-                voluntarily fasted for 24 hours or had a busy day with little
-                time to eat. But going to bed hungry because there’s no food in
-                the house is a whole different, scary experience."
-              </td>
-              <td>30</td>
-              <td>14</td>
-              <td>03/08/2023 11:00</td>
-              <td>
-                <a
-                  href="/view-listing"
-                  className="btn button btn-sm text-light"
-                >
-                  View
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div
-                  className="fixed-size-container"
-                  style={{ width: "120px", height: "120px" }}
-                >
-                  <img
-                    src={ReviewImg01}
-                    class="object-fit-cover w-100 h-100"
-                    alt="review-img"
-                  />
-                </div>
-              </td>
-              <td>4242</td>
-              <td className="">Feed The Hungry</td>
-              <td>
-                {" "}
-                "When was the last time you went to bed hungry? Maybe you
-                voluntarily fasted for 24 hours or had a busy day with little
-                time to eat. But going to bed hungry because there’s no food in
-                the house is a whole different, scary experience."
-              </td>
-              <td>30</td>
-              <td>14</td>
-              <td>03/08/2023 11:00</td>
-              <td>
-                <a
-                  href="/view-listing"
-                  className="btn button btn-sm text-light"
-                >
-                  View
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div
-                  className="fixed-size-container"
-                  style={{ width: "120px", height: "120px" }}
-                >
-                  <img
-                    src={ReviewImg01}
-                    class="object-fit-cover w-100 h-100"
-                    alt="review-img"
-                  />
-                </div>
-              </td>
-              <td>4242</td>
-              <td className="">Feed The Hungry</td>
-              <td>
-                {" "}
-                "When was the last time you went to bed hungry? Maybe you
-                voluntarily fasted for 24 hours or had a busy day with little
-                time to eat. But going to bed hungry because there’s no food in
-                the house is a whole different, scary experience."
-              </td>
-              <td>30</td>
-              <td>14</td>
-              <td>03/08/2023 11:00</td>
-              <td>
-                <a
-                  href="/view-listing"
-                  className="btn button btn-sm text-light"
-                >
-                  View
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div
-                  className="fixed-size-container"
-                  style={{ width: "120px", height: "120px" }}
-                >
-                  <img
-                    src={ReviewImg01}
-                    class="object-fit-cover w-100 h-100"
-                    alt="review-img"
-                  />
-                </div>
-              </td>
-              <td>4242</td>
-              <td className="">Feed The Hungry</td>
-              <td>
-                {" "}
-                "When was the last time you went to bed hungry? Maybe you
-                voluntarily fasted for 24 hours or had a busy day with little
-                time to eat. But going to bed hungry because there’s no food in
-                the house is a whole different, scary experience."
-              </td>
-              <td>30</td>
-              <td>14</td>
-              <td>03/08/2023 11:00</td>
-              <td>
-                <a
-                  href="/view-listing"
-                  className="btn button btn-sm text-light"
-                >
-                  View
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div
-                  className="fixed-size-container"
-                  style={{ width: "120px", height: "120px" }}
-                >
-                  <img
-                    src={ReviewImg01}
-                    class="object-fit-cover w-100 h-100"
-                    alt="review-img"
-                  />
-                </div>
-              </td>
-              <td>4242</td>
-              <td className="">Feed The Hungry</td>
-              <td>
-                {" "}
-                "When was the last time you went to bed hungry? Maybe you
-                voluntarily fasted for 24 hours or had a busy day with little
-                time to eat. But going to bed hungry because there’s no food in
-                the house is a whole different, scary experience."
-              </td>
-              <td>30</td>
-              <td>14</td>
-              <td>03/08/2023 11:00</td>
-              <td>
-                <a
-                  href="/view-listing"
-                  className="btn button btn-sm text-light"
-                >
-                  View
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div
-                  className="fixed-size-container"
-                  style={{ width: "120px", height: "120px" }}
-                >
-                  <img
-                    src={ReviewImg01}
-                    class="object-fit-cover w-100 h-100"
-                    alt="review-img"
-                  />
-                </div>
-              </td>
-              <td>4242</td>
-              <td className="">Feed The Hungry</td>
-              <td>
-                {" "}
-                "When was the last time you went to bed hungry? Maybe you
-                voluntarily fasted for 24 hours or had a busy day with little
-                time to eat. But going to bed hungry because there’s no food in
-                the house is a whole different, scary experience."
-              </td>
-              <td>30</td>
-              <td>14</td>
-              <td>03/08/2023 11:00</td>
-              <td>
-                <a
-                  href="/view-listing"
-                  className="btn button btn-sm text-light"
-                >
-                  View
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div
-                  className="fixed-size-container"
-                  style={{ width: "120px", height: "120px" }}
-                >
-                  <img
-                    src={ReviewImg01}
-                    class="object-fit-cover w-100 h-100"
-                    alt="review-img"
-                  />
-                </div>
-              </td>
-              <td>4242</td>
-              <td className="">Feed The Hungry</td>
-              <td>
-                {" "}
-                "When was the last time you went to bed hungry? Maybe you
-                voluntarily fasted for 24 hours or had a busy day with little
-                time to eat. But going to bed hungry because there’s no food in
-                the house is a whole different, scary experience."
-              </td>
-              <td>30</td>
-              <td>14</td>
-              <td>03/08/2023 11:00</td>
-              <td>
-                <a
-                  href="/view-listing"
-                  className="btn button btn-sm text-light"
-                >
-                  View
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div
-                  className="fixed-size-container"
-                  style={{ width: "120px", height: "120px" }}
-                >
-                  <img
-                    src={ReviewImg01}
-                    class="object-fit-cover w-100 h-100"
-                    alt="review-img"
-                  />
-                </div>
-              </td>
-              <td>4242</td>
-              <td className="">Feed The Hungry</td>
-              <td>
-                {" "}
-                "When was the last time you went to bed hungry? Maybe you
-                voluntarily fasted for 24 hours or had a busy day with little
-                time to eat. But going to bed hungry because there’s no food in
-                the house is a whole different, scary experience."
-              </td>
-              <td>30</td>
-              <td>14</td>
-              <td>03/08/2023 11:00</td>
-              <td>
-                <a
-                  href="/view-listing"
-                  className="btn button btn-sm text-light"
-                >
-                  View
-                </a>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div
-                  className="fixed-size-container"
-                  style={{ width: "120px", height: "120px" }}
-                >
-                  <img
-                    src={ReviewImg01}
-                    class="object-fit-cover w-100 h-100"
-                    alt="review-img"
-                  />
-                </div>
-              </td>
-              <td>4242</td>
-              <td className="">Feed The Hungry</td>
-              <td>
-                {" "}
-                "When was the last time you went to bed hungry? Maybe you
-                voluntarily fasted for 24 hours or had a busy day with little
-                time to eat. But going to bed hungry because there’s no food in
-                the house is a whole different, scary experience."
-              </td>
-              <td>30</td>
-              <td>14</td>
-              <td>03/08/2023 11:00</td>
-              <td>
-                <a
-                  href="/view-listing"
-                  className="btn button btn-sm text-light"
-                >
-                  View
-                </a>
-              </td>
-            </tr>
+            {
+              filteredResults?.map((item, index) => (
+                <tr key={index}>
+                  <td>
+                    <div
+                      className="fixed-size-container"
+                      style={{ width: "120px", height: "120px" }}
+                    >
+                      <img
+                        src={item?.images?.length > 0 ? item?.images[0] : ReviewImg01}
+                        class="object-fit-cover w-100 h-100"
+                        alt="review-img"
+                      />
+                    </div>
+                  </td>
+                  <td>{item?._id}</td>
+                  <td className="">{item?.title}</td>
+                  <td>
+                    {item?.description}
+                  </td>
+                  <td>{item?.likes?.length}</td>
+                  <td>{item?.dislikes?.length}</td>
+                  <td>{moment(item?.createdAt).format('D-MMM-YYYY')}</td>
+                  <td>
+                    <a
+                      href={`/view-listing/${item?._id}`}
+                      className="btn button btn-sm text-light"
+                    >
+                      View
+                    </a>
+                  </td>
+                </tr>
+              ))
+            }
+
           </tbody>
         </table>
 
-        <PageNav />
+        <PageNav setPage={setPage} totalPage={totalPage} />
       </div>
     </div>
   );
