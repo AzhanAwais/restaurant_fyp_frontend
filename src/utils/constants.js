@@ -13,4 +13,5 @@ export const apiUrl = {
     restaurant: "/restaurant",
     blog: "/blog",
     comment: "/comment",
+    dashboard:"/dashboard"
 }
