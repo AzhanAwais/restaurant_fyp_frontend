@@ -4,7 +4,7 @@ import UserPFP from "../../images/user-pfp.jpeg";
 import PageNav from "../../components/PageNav";
 import ReviewImg01 from "../../images/review-img-01.jpg";
 import { useNavigate, useParams } from "react-router-dom";
-import { DeleteUser, GetSingleUser } from "../../services/user";
+import { DeleteUser, GetSingleUser, UpdateUser } from "../../services/user";
 import moment from "moment";
 import { GetAllBlog } from "../../services/blog";
 
@@ -23,12 +23,26 @@ const ViewUser = () => {
     item?.title?.toLowerCase().includes(search)
   ))
 
-  const deleteUser = async()=>{
-    try{
-        const res = await DeleteUser(id)
-        navigate("/users")
+  const deleteUser = async () => {
+    try {
+      const res = await DeleteUser(id)
+      navigate("/users")
     }
-    catch(e){
+    catch (e) {
+      console.log(e)
+    }
+  }
+
+  const disableUser = async () => {
+    try {
+      const data = {
+        is_active: false
+      }
+      const res = await UpdateUser(id, data)
+      navigate("/users")
+
+    }
+    catch (e) {
       console.log(e)
     }
   }
@@ -181,7 +195,7 @@ const ViewUser = () => {
               <a className="btn button text-light w-100" onClick={deleteUser}>Delete</a>
             </div>
             <div className="col-3 col-xxl-2">
-              <a className="btn button text-light w-100">Disable</a>
+              <a className="btn button text-light w-100" onClick={disableUser}>Disable</a>
             </div>
           </div>
           <hr />
@@ -195,8 +209,8 @@ const ViewUser = () => {
         <div className="row align-items-center">
           <div className="col-8 col-xxl-6 d-flex pe-0">
             <input
-             value={search}
-             onChange={(e) => setSearch(e.target.value)}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               type="keyword"
               class="form-control text-dark"
               id="search-box"
