@@ -8,6 +8,9 @@ const Verifications = () => {
     const [search, setSearch] = useState("")
     const [selectSearch, setSelectSearch] = useState("")
     const [status, setStatus] = useState("")
+    const [pending, setPending] = useState(0)
+    const [reject, setReject] = useState(0)
+    const [approve, setApprove] = useState(0)
 
     const [verification, setVerification] = useState([])
     const [update, setUpdate] = useState(0)
@@ -22,7 +25,17 @@ const Verifications = () => {
             if(selectSearch == "nic") query["nic"] = search
 
             let res = await getVerification(query)
+
             setVerification(res?.data?.data)
+
+            res = await getVerification({status: 'pending'})
+            setPending(res?.data?.data.length)
+
+            res = await getVerification({status: 'approved'})
+            setApprove(res?.data?.data.length)
+
+            res = await getVerification({status: 'rejected'})
+            setReject(res?.data?.data.length)
         } catch (e) {
             console.log(e.message)
         }
@@ -32,7 +45,6 @@ const Verifications = () => {
         try {
             let res = await verifyUser(selectedRecord, status)
             setUpdate(update + 1)
-            // setVerification(res?.data?.data)
         } catch (e) {
             console.log(e.message)
         }
@@ -48,9 +60,9 @@ const Verifications = () => {
                 <hr/>
                 {/*Analytics Section*/}
                 <div className="d-flex mb-3">
-                    <h6 className="me-5">Total Verified Users: 12</h6>
-                    <h6 className="me-5">Pending Requests: 10</h6>
-                    <h6 className="me-5">Rejected Requests: 2</h6>
+                    <h6 className="me-5">Total Approved Users: {approve}</h6>
+                    <h6 className="me-5">Pending Requests: {pending}</h6>
+                    <h6 className="me-5">Rejected Requests: {reject}</h6>
                 </div>
 
                 {/*Search Section*/}
