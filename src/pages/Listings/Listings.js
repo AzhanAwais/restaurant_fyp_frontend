@@ -5,13 +5,53 @@ import ReviewImg01 from "../../images/espresso.jpg";
 import ReviewImg02 from "../../images/review-img-02.jpg";
 import ReviewImg03 from "../../images/review-img-03.jpg";
 import {getRestaurant} from "../../services/restaurant";
+import {GetAllCuisine} from "../../services/cuisine";
+import {GetAllAmbience} from "../../services/ambience";
 
 const Listings = () => {
     const [restaurant, setRestaurant] = useState([])
+
+    const [search, setSearch] = useState("")
+    const [select, setSelect] = useState("")
+    const [cuisine, setCuisine] = useState([])
+    const [selectCuisine, setSelectCuisine] = useState([])
+    const [ambience, setAmbience] = useState([])
+    const [selectAmbience, setSelectAmbience] = useState([])
+    const [selectRes, setSelectRes] = useState("")
     const getAllRestaurants = async () => {
         try {
-            let res = await getRestaurant()
+            let query = {
+                name: search == "" ? undefined : search,
+                cuisine_type: selectCuisine,
+                ambience_type: selectAmbience
+            }
+            if(selectRes == "id") {
+                query["id"] = search
+                delete query['name']
+            }
+            if(selectRes == "name") query["name"] = search
+            let res = await getRestaurant(query)
             setRestaurant(res?.data?.data)
+
+        } catch (e) {
+            console.log(e.message)
+        }
+    }
+
+    const getAllCuisine = async () => {
+        try {
+            let res = await GetAllCuisine()
+            setCuisine(res?.data?.data)
+
+        } catch (e) {
+            console.log(e.message)
+        }
+    }
+
+    const getAllAmbience = async () => {
+        try {
+            let res = await GetAllAmbience()
+            setAmbience(res?.data?.data)
 
         } catch (e) {
             console.log(e.message)
@@ -19,7 +59,9 @@ const Listings = () => {
     }
     useEffect(() => {
         getAllRestaurants()
-    }, [])
+        getAllCuisine()
+        getAllAmbience()
+    }, [search, selectCuisine, selectAmbience])
     return (
         <div className="main-content m-5">
             {/*Page Title */}
@@ -40,11 +82,12 @@ const Listings = () => {
                             aria-describedby="search-keyword"
                             placeholder="Enter Keyword"
                             style={{width: "100%"}}
+                            onChange={e => setSearch(e.target.value)}
                         ></input>
                     </div>
-                    <div className="col-3">
-                        <button className="btn button text-light">Search</button>
-                    </div>
+                    {/*<div className="col-3">*/}
+                    {/*    <button className="btn button text-light">Search</button>*/}
+                    {/*</div>*/}
                 </div>
                 <hr/>
 
@@ -56,10 +99,10 @@ const Listings = () => {
                         <h6 className="mb-0 me-3">Restaurant: </h6>
                     </div>
                     <div className="col-3 col-xxl-2 d-flex align-items-center">
-                        <select class="form-select search-select">
-                            <option selected>--Select--</option>
-                            <option value="1"> ID</option>
-                            <option value="2"> Name</option>
+                        <select class="form-select search-select" onChange={e => setSelectRes(e.target.value)}>
+                            <option value={""}>--Select--</option>
+                            <option value="id"> ID</option>
+                            <option value="name"> Name</option>
                         </select>
                     </div>
                     <div className="col-4 col-xxl-3 d-flex align-items-center">
@@ -70,6 +113,7 @@ const Listings = () => {
                             aria-describedby="search-keyword"
                             placeholder="Enter Keyword"
                             style={{width: "100%"}}
+                            onChange={e => setSearch(e.target.value)}
                         ></input>
                     </div>
                 </div>
@@ -79,24 +123,22 @@ const Listings = () => {
                         <h6 className="mb-0 me-3 text-xxl-wrap">Ambience: </h6>
                     </div>
                     <div className="search-section col-3 col-xxl-2 d-flex align-items-center">
-                        <select class="form-select search-select">
-                            <option selected>--Select--</option>
-                            <option value="1">Category 1</option>
-                            <option value="2">Category 2</option>
-                            <option value="3">Category 3</option>
-                            <option value="4">Category 4</option>
+                        <select class="form-select search-select" onChange={e => setSelectAmbience(e.target.value)}>
+                            <option value={""}>--Select--</option>
+                            {ambience.length > 0 && ambience.map(dt => {
+                                return (<option value={dt?._id}>{dt?.name}</option>)
+                            })}
                         </select>
                     </div>
                     <div className="col-1">
                         <h6 className="mb-0">Cuisine-Type: </h6>
                     </div>
                     <div className="search-section col-3 col-xxl-2 d-flex align-items-center">
-                        <select class="form-select search-select">
-                            <option selected>--Select--</option>
-                            <option value="1">Brand 1</option>
-                            <option value="2">Brand 2</option>
-                            <option value="3">Brand 3</option>
-                            <option value="4">Brand 4</option>
+                        <select class="form-select search-select" onChange={e => setSelectCuisine(e.target.value)}>
+                            <option value={""}>--Select--</option>
+                            {cuisine.length > 0 && cuisine.map(dt => {
+                                return (<option value={dt?._id}>{dt?.name}</option>)
+                            })}
                         </select>
                     </div>
                 </div>
@@ -283,12 +325,12 @@ const Listings = () => {
                                         {dt?.name}
                                     </td>
                                     <td>{dt?.address}</td>
-                                    <td>Active</td>
-                                    <td>1771</td>
-                                    <td>Muhammad Hamza</td>
+                                    <td>{dt?.ambience_type?.name}</td>
+                                    <td>{dt?.cuisine_type?.name}</td>
+                                    <td>{dt?.created_by?.username}</td>
                                     <td>
                                         <a
-                                            href="/view-listing"
+                                            href={`/view-listing/${dt?._id}`}
                                             className="btn button btn-sm text-light"
                                         >
                                             View
