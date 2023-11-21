@@ -1,23 +1,45 @@
 import React, {useEffect, useState} from "react";
 import "./Verifications.css";
 import PageNav from "../../components/PageNav";
-import {getVerification} from "../../services/verification";
+import {getVerification, verifyUser} from "../../services/verification";
 
 const Verifications = () => {
 
+    const [search, setSearch] = useState("")
+    const [selectSearch, setSelectSearch] = useState("")
+    const [status, setStatus] = useState("")
+
     const [verification, setVerification] = useState([])
+    const [update, setUpdate] = useState(0)
     const GetAllVerification = async () => {
         try {
-            let query = {}
-            let res = await getVerification()
+            let query = {
+                status: status
+            }
+            if(selectSearch == "id") query["id"] = search
+            if(selectSearch == "user_id") query["user_id"] = search
+            if(selectSearch == "name") query["name"] = search
+            if(selectSearch == "nic") query["nic"] = search
+
+            let res = await getVerification(query)
             setVerification(res?.data?.data)
+        } catch (e) {
+            console.log(e.message)
+        }
+    }
+
+    const VerifyUser = async (selectedRecord, status) => {
+        try {
+            let res = await verifyUser(selectedRecord, status)
+            setUpdate(update + 1)
+            // setVerification(res?.data?.data)
         } catch (e) {
             console.log(e.message)
         }
     }
     useEffect(() => {
         GetAllVerification()
-    }, [])
+    }, [update, search, status])
     return (
         <div className="main-content m-5">
             {/*Page Title */}
@@ -37,12 +59,12 @@ const Verifications = () => {
                         <h6 className="mb-0 me-3">Search By: </h6>
                     </div>
                     <div className="col-3 col-xxl-2 d-flex align-items-center">
-                        <select class="form-select search-select">
-                            <option selected>--Select--</option>
-                            <option value="1">Verification ID</option>
-                            <option value="2">User ID</option>
-                            <option value="3">User Name</option>
-                            <option value="4">CNIC</option>
+                        <select class="form-select search-select" onChange={e => setSelectSearch(e.target.value)}>
+                            <option value={""}>--Select--</option>
+                            <option value="id">Verification ID</option>
+                            <option value="user_id">User ID</option>
+                            <option value="name">User Name</option>
+                            <option value="nic">CNIC</option>
                         </select>
                     </div>
                     <div className="col-5 col-xxl-3 d-flex align-items-center">
@@ -53,6 +75,7 @@ const Verifications = () => {
                             aria-describedby="search-keyword"
                             placeholder="Enter Keyword"
                             style={{width: "100%"}}
+                            onChange={e => setSearch(e.target.value)}
                         ></input>
                     </div>
                     <div className="col-1">
@@ -66,15 +89,12 @@ const Verifications = () => {
                         <h6 className="mb-0 me-3 text-xxl-wrap">Status: </h6>
                     </div>
                     <div className="search-section col-3 col-xxl-2 align-items-center">
-                        <select class="form-select search-select">
-                            <option selected>--Select--</option>
-                            <option value="1">Verified</option>
-                            <option value="2">Pending</option>
-                            <option value="2">Rejected</option>
+                        <select class="form-select search-select" onChange={e=>setStatus(e.target.value)}>
+                            <option value={""}>--Select--</option>
+                            <option value="approved">Approved</option>
+                            <option value="pending">Pending</option>
+                            <option value="rejected">Rejected</option>
                         </select>
-                    </div>
-                    <div className="col-1">
-                        <button className="btn button text-light">Apply</button>
                     </div>
                 </div>
 
@@ -173,18 +193,23 @@ const Verifications = () => {
                                 </td>
                                 <td>{dt?.status}</td>
                                 <td>
-                                    <a href="" className="btn button btn-sm text-light me-5 mb-2">
+                                    <button href="" className="btn button btn-sm text-light me-5 mb-2">
                                         View
-                                    </a>
-                                    <a
-                                        href="#"
+                                    </button>
+                                    <button
+                                        // href="#"
                                         className="btn approve-button btn-sm text-light me-2"
+                                        onClick={() => {
+                                            VerifyUser(dt?._id, 'approved')
+                                        }}
                                     >
                                         <i className="bi bi-check-lg"></i>
-                                    </a>
-                                    <a href="#" className="btn reject-button btn-sm text-light">
+                                    </button>
+                                    <button href="#" className="btn reject-button btn-sm text-light" onClick={() => {
+                                        VerifyUser(dt?._id, 'rejected')
+                                    }}>
                                         <i className="bi bi-x-lg"></i>
-                                    </a>
+                                    </button>
                                 </td>
                             </tr>
                         )
