@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./UsersList.css";
 import PageNav from "../../components/PageNav";
-import { GetAllUser } from "../../services/user";
+import { DeleteUser, GetAllUser } from "../../services/user";
 
 const Users = () => {
   const [users, setUsers] = useState([])
@@ -16,7 +16,7 @@ const Users = () => {
     if (searchBy != "") {
       return item[searchBy]?.toLowerCase().includes(search)
     }
-    else{
+    else {
       return item
     }
   })
@@ -28,6 +28,7 @@ const Users = () => {
           page: page,
           perPage: perPage,
           paginate: true,
+          role: "user",
           ...(verifiedStatus != "" && { is_verified: verifiedStatus }),
         }
 
