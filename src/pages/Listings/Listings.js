@@ -143,7 +143,7 @@ const Listings = () => {
                     </div>
                 </div>
 
-                <div className="row align-items-center mb-3">
+                {/*<div className="row align-items-center mb-3">
                     <div className="col-1 me-2">
                         <h6 className="mb-0 text-xxl-wrap">Discounts: </h6>
                     </div>
@@ -177,9 +177,9 @@ const Listings = () => {
                         ></input>
                     </div>
 
-                </div>
+                </div>*/}
 
-                <div className="row align-items-center mb-3">
+                {/*<div className="row align-items-center mb-3">
                     <div className="col-1 me-2">
                         <h6 className="mb-0 text-wrap">Location: </h6>
                     </div>
@@ -201,9 +201,9 @@ const Listings = () => {
                             <option value="4">City 4</option>
                         </select>
                     </div>
-                </div>
+                </div>*/}
 
-                <div className="row align-items-center mb-4">
+                {/*<div className="row align-items-center mb-4">
                     <div className="col-1 me-2">
                         <h6 className="mb-0">Opening hours: </h6>
                     </div>
@@ -239,8 +239,8 @@ const Listings = () => {
                         </select>
                     </div>
 
-                </div>
-                <div className="row align-items-center mb-4">
+                </div>*/}
+                {/*<div className="row align-items-center mb-4">
                     <div className="col-1">
                         <h6 className="mb-0">Service options: </h6>
                     </div>
@@ -253,11 +253,11 @@ const Listings = () => {
                         </select>
                         <button className="btn button text-light">Apply</button>
                     </div>
-                </div>
+                </div>*/}
 
                 {/*Sorting Section*/}
                 <hr/>
-                <div className="row align-items-center">
+                {/*<div className="row align-items-center">
                     <div className="col-1 me-2">
                         <h6 className="mb-0 text-xxl-wrap">Sort By: </h6>
                     </div>
@@ -271,7 +271,7 @@ const Listings = () => {
                             <option value="5">Highest Price</option>
                         </select>
                     </div>
-                </div>
+                </div>*/}
 
                 {/*Table Section*/}
                 <table className="table table-hover my-4">
